@@ -108,12 +108,6 @@ int main(int argc, char *argv[])
                 copyToClipboard(secretStr);
             }
         }
-        // 根据选项执行不同的操作
-        if (options.count("-c"))
-        {
-            std::string secretStr = "aaaaa";
-            copyToClipboard(secretStr);
-        }
 
         // if (options.count("-b"))
         // {
