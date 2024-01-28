@@ -49,6 +49,7 @@ void copyToClipboard(const std::string &content)
 
 int main(int argc, char *argv[])
 {
+    std::string fileName = "conf.txt";
     std::vector<std::string> arguments(argv + 1, argv + argc);
     std::map<std::string, std::string> options;
     std::string secret = "";
@@ -61,8 +62,8 @@ int main(int argc, char *argv[])
             // 如果参数以 "-" 开头
             if (arguments[i].size() > 1 && arguments[i][0] == '-')
             {
-                // 如果是 -c 选项，直接存储，不需要检查后面是否有参数
-                if (arguments[i] == "-c")
+                // 如果是 -c, -l 选项，直接存储，不需要检查后面是否有参数
+                if (arguments[i] == "-c" || arguments[i] == "-l")
                 {
                     options[arguments[i]] = "";
                 }
@@ -91,31 +92,103 @@ int main(int argc, char *argv[])
             std::cout << "Option -a selected with value: " << options["-a"] << std::endl;
 
             std::fstream cfile;
-            cfile.open("conf.txt", std::ios::out | std::ios::app);
+            cfile.open(fileName, std::ios::out | std::ios::app);
             cfile << "name:" << options["-a"] << std::endl;
             std::cout << "Please enter your token:";
             std::cin >> secret;
             cfile << "secret:" << secret << std::endl;
             cfile.close();
-            std::cout << "your dynamic token:" << auth::generateToken(secret) << std::endl;
 
             if (options.count("-c"))
             {
-                std::cout << "copy!";
                 std::ostringstream oss;
                 oss << auth::generateToken(secret);
                 std::string secretStr = oss.str();
                 copyToClipboard(secretStr);
             }
+            std::cout << "your dynamic token:" << auth::generateToken(secret) << std::endl;
         }
+        if (options.count("-l"))
+        {
+            std::ifstream inputFile(fileName);
+            if (!inputFile.is_open())
+            {
+                std::cerr << "Unable to open the file." << std::endl;
+            }
+            std::string line;
+            std::string currentName, allNames;
 
-        // if (options.count("-b"))
-        // {
-        //     std::cout << "Option -b selected with value: " << options["-b"] << std::endl;
+            while (std::getline(inputFile, line))
+            {
+                size_t namePos = line.find("name:");
+                if (namePos != std::string::npos)
+                {
+                    currentName = line.substr(namePos + 5); // 5 是 "name:" 的长度
+                    allNames += currentName + "\n";
+                }
+            }
+            inputFile.close();
 
-        //     // 添加更多 -b 相关的逻辑
-        //     // ...
-        // }
+            // 检查最后换行
+            if (!allNames.empty() && allNames.back() == '\n')
+            {
+                allNames.pop_back();
+            }
+
+            if (!fileName.empty())
+            {
+                std::cout << "Name found: \n" << allNames << std::endl;
+            }
+            else
+            {
+                std::cout << "Name not found in the file." << std::endl;
+            }
+        }
+        if (options.count("-n"))
+        {
+            std::string targetName;
+            std::string foundSecret;  // 用于存储找到的secret值
+            targetName = /*"dfsfs";*/ options["-n"];
+            std::ifstream inputFile(fileName);
+            if (!inputFile.is_open())
+            {
+                std::cerr << "Unable to open the file." << std::endl;
+            }
+            std::string line;
+            std::string currentName;
+
+            while (std::getline(inputFile, line))
+            {
+                size_t namePos = line.find("name:");
+                if (namePos != std::string::npos)
+                {
+                    std::string currentName = line.substr(namePos + 5); // 5 是 "name:" 的长度
+                    if (currentName == targetName)
+                    {
+                        // 找到目标名字后，继续查找对应的secret值
+                        while (std::getline(inputFile, line))
+                        {
+                            size_t secretPos = line.find("secret:");
+                            if (secretPos != std::string::npos)
+                            {
+                                foundSecret = line.substr(secretPos + 7); // 7 是 "secret:" 的长度
+                                break;                                    // 找到secret值后，结束循环
+                            }
+                        }
+                        break; // 结束外层循环
+                    }
+                }
+            }
+            if (options.count("-c"))
+            {
+                std::ostringstream oss;
+                oss << auth::generateToken(foundSecret);
+                std::string secretStr = oss.str();
+                copyToClipboard(secretStr);
+            }
+            std::cout << "your dynamic token:" << auth::generateToken(foundSecret) << std::endl;
+            inputFile.close();
+        }
     }
     else
     {
@@ -127,7 +200,7 @@ int main(int argc, char *argv[])
         if (save == "yes" || save == "y")
         {
             std::fstream cfile;
-            cfile.open("conf.txt", std::ios::out | std::ios::app);
+            cfile.open(fileName, std::ios::out | std::ios::app);
             std::string Name;
             std::cout << "the name you wish to save:";
             std::cin >> Name;
