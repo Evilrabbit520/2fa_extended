@@ -24,3 +24,15 @@ By default, the key generates a 6-digit code.
 - Without any arguments, 2fa asks for a time-based key from standard input, thereby printing a two-factor authentication code (prompting whether to save it, and if so, what name to save it with).
 
 The default time-based authentication code is derived from a hash of the key and the current time, so it is important that the system clock is accurate to at least thirty seconds.
+
+### How to build and use
+
+`mkdir build` directory.
+
+``` shell
+cmake..
+
+make
+
+./2fa
+```
