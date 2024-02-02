@@ -62,8 +62,8 @@ int main(int argc, char *argv[])
             // 如果参数以 "-" 开头
             if (arguments[i].size() > 1 && arguments[i][0] == '-')
             {
-                // 如果是 -c, -l 选项，直接存储，不需要检查后面是否有参数
-                if (arguments[i] == "-c" || arguments[i] == "-l")
+                // 如果是 -all -c, -l 选项，直接存储，不需要检查后面是否有参数
+                if (arguments[i] == "-all" || arguments[i] == "-c" || arguments[i] == "-l")
                 {
                     options[arguments[i]] = "";
                 }
@@ -87,10 +87,55 @@ int main(int argc, char *argv[])
             }
         }
         // 根据选项执行不同的操作
+        if (options.count("-all"))
+        {
+
+            struct Credential
+            {
+                std::string name;
+                std::string secret;
+            };
+            std::ifstream inputFile(fileName);
+            std::vector<Credential> credentials;
+
+            if (!inputFile.is_open())
+            {
+                std::cerr << "Unable to open the file." << std::endl;
+            }
+            
+            std::string line;
+            Credential currentCredential;
+
+            while (std::getline(inputFile, line))
+            {
+                size_t namePos = line.find("name:");
+                if (namePos != std::string::npos)
+                {
+                    currentCredential.name = line.substr(namePos + 5);
+                }
+                size_t secretPos = line.find("secret:");
+                if (secretPos != std::string::npos)
+                {
+                    currentCredential.secret = line.substr(secretPos + 7);
+                    credentials.push_back(currentCredential);
+                }
+            }
+            if (options.count("-c"))
+            {
+                std::cout << "not support." << std::endl;
+            }
+            
+            if(!credentials.empty())
+            {
+                for(const auto& credential : credentials)
+                {
+                    std::cout << "Name: " << credential.name << ", Token: " << auth::generateToken(credential.secret) << "\n";
+                }
+            }
+            inputFile.close();
+        }
         if (options.count("-a"))
         {
-            std::cout << "Option -a selected with value: " << options["-a"] << std::endl;
-
             std::fstream cfile;
             cfile.open(fileName, std::ios::out | std::ios::app);
             cfile << "name:" << options["-a"] << std::endl;
@@ -137,7 +182,8 @@ int main(int argc, char *argv[])
 
             if (!fileName.empty())
             {
-                std::cout << "Name found: \n" << allNames << std::endl;
+                std::cout << "Name found: \n"
+                          << allNames << std::endl;
             }
             else
             {
@@ -147,7 +193,7 @@ int main(int argc, char *argv[])
         if (options.count("-n"))
         {
             std::string targetName;
-            std::string foundSecret;  // 用于存储找到的secret值
+            std::string foundSecret; // 用于存储找到的secret值
             targetName = /*"dfsfs";*/ options["-n"];
             std::ifstream inputFile(fileName);
             if (!inputFile.is_open())
