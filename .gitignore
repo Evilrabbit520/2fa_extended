@@ -1,3 +1,22 @@
+# for Mac OS X System Files
+.DS_Store
+*/.DS_Store
+.vscode/
+./git
+Thumbs.db
+
+CMakeFiles
+CMakeCache.txt
+*.cmake
+*.make
+Makefile
+
+.so
+.dylib
+.exe
+.dll
+
+# Project
 build/
 doc/
 
