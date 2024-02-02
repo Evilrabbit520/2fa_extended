@@ -1,5 +1,6 @@
 # 2fa_extended (2FA 扩展)
 Two Factor Authentication(2fa) extended.
+
 扩展了双因素认证（2FA）
 
 usage (使用方法) :
@@ -48,6 +49,7 @@ The default time-based authentication code is derived from a hash of the key and
 ### How to build and use (如何构建) :
 
 `mkdir build` directory.
+
 `mkdir build` 创建 build 目录。
 
 ``` shell
