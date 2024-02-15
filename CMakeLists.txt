@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 
 project(2fa)
 
-SET(CMAKE_BUILD_TYPE "Debug")
+SET(CMAKE_BUILD_TYPE "Release")
 # add_compile_options(-I/opt/homebrew/Cellar/nlohmann-json/3.9.1_1/include -std=c++11)
 include_directories(include)
 

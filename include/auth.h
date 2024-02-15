@@ -13,7 +13,7 @@
 #define TFA_AUTH_H__
 
 #include <iostream>
-#include "src/otp.h"
+#include "otp.h"
 #include <ctime>
 #include <algorithm>
 #include <regex>

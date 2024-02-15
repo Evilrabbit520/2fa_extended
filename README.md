@@ -1,5 +1,6 @@
 # 2fa_extended (2FA 扩展)
 Two Factor Authentication(2fa) extended.
+
 扩展了双因素认证（2FA）
 
 usage (使用方法) :
@@ -48,6 +49,7 @@ The default time-based authentication code is derived from a hash of the key and
 ### How to build and use (如何构建) :
 
 `mkdir build` directory.
+
 `mkdir build` 创建 build 目录。
 
 ``` shell
@@ -57,3 +59,10 @@ make
 
 ./2fa
 ```
+
+### Warnings and tips (敬告和提示) :
+
+Please be sure to check your .gitignore or .gitignore_global files before pushing to ensure that they contain your personal key and system configuration file and are not uploaded. These files will not be detected by bots when they perform code reviews.
+
+请您在 push 前务必检查您的 .gitignore 或 .gitignore_global 文件，确保它们包含您的个人密钥和系统配置文件，不被上传。机器人进行代码审查时它们不会检测出这些文件。
+

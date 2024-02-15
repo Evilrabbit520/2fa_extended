@@ -5,7 +5,8 @@
 #include <cstdio>
 #include <sstream>
 #include <map>
-#include "auth.h"
+#include "include/auth.h"
+#include "src/ProgressBar.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -182,8 +183,7 @@ int main(int argc, char *argv[])
 
             if (!fileName.empty())
             {
-                std::cout << "Name found: \n"
-                          << allNames << std::endl;
+                std::cout << "Name found: \n" << allNames << std::endl;
             }
             else
             {
@@ -233,6 +233,7 @@ int main(int argc, char *argv[])
                 copyToClipboard(secretStr);
             }
             std::cout << "your dynamic token:" << auth::generateToken(foundSecret) << std::endl;
+            showCountdown();
             inputFile.close();
         }
     }
