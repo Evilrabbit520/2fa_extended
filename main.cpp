@@ -50,7 +50,7 @@ void copyToClipboard(const std::string &content)
 
 int main(int argc, char *argv[])
 {
-    std::string fileName = "2fakey.key";
+    std::string fileName = "/private/etc/2fa/2fakey.key";
     std::vector<std::string> arguments(argv + 1, argv + argc);
     std::map<std::string, std::string> options;
     std::string secret = "";
