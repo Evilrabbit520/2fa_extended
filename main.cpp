@@ -10,6 +10,8 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#include <shlobj.h>
+#include <winerror.h>
 #endif
 
 void copyToClipboard(const std::string &content)
@@ -50,7 +52,17 @@ void copyToClipboard(const std::string &content)
 
 int main(int argc, char *argv[])
 {
+    #ifdef _WIN32
+    std::string fileName;
+    char path[MAX_PATH];
+    if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_PERSONAL, NULL, 0, path))) {
+        fileName = std::string(path) + "\\2fakey.key";
+    } else {
+        fileName = "2fakey.key"; // fallback: 当前目录
+    }
+    #else
     std::string fileName = "/private/etc/2fa/2fakey.key";
+    #endif
     std::vector<std::string> arguments(argv + 1, argv + argc);
     std::map<std::string, std::string> options;
     std::string secret = "";
@@ -102,6 +114,7 @@ int main(int argc, char *argv[])
             if (!inputFile.is_open())
             {
                 std::cerr << "Unable to open the file." << std::endl;
+                return 1;
             }
             
             std::string line;
@@ -160,7 +173,9 @@ int main(int argc, char *argv[])
             if (!inputFile.is_open())
             {
                 std::cerr << "Unable to open the file." << std::endl;
+                return 1;
             }
+
             std::string line;
             std::string currentName, allNames;
 
@@ -199,7 +214,9 @@ int main(int argc, char *argv[])
             if (!inputFile.is_open())
             {
                 std::cerr << "Unable to open the file." << std::endl;
+                return 1;
             }
+
             std::string line;
             std::string currentName;
 
@@ -224,6 +241,11 @@ int main(int argc, char *argv[])
                         break; // 结束外层循环
                     }
                 }
+            }
+            if (foundSecret.empty())
+            {
+                std::cout << "Name "<<targetName<<" not found in the file." << std::endl;
+                return 1;
             }
             if (options.count("-c"))
             {

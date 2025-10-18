@@ -36,4 +36,7 @@ int showCountdown()
     // 清空进度条
     std::cout << std::string(60, ' ') << "\r";
     std::cout.flush();
+    #ifdef _WIN32
+    return 0;
+    #endif
 }
